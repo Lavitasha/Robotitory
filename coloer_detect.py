@@ -8,6 +8,7 @@ import numpy as np
 import cv2
 import math
 import time
+import PiCamera as camera
 
 # Specify camera/device number (usually 0)
 camera = 0
