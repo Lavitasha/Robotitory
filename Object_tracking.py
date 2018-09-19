@@ -18,24 +18,40 @@ hownear=15.0
 reversetime=0.5
 turntime=0.75
 
-leftmotorspeed=0.5
-rightmotorspeed=0.5
+leftmotorspeed=0.30
+rightmotorspeed=0.288
 
 motorforward=(leftmotorspeed, rightmotorspeed)
 motorbackward=(-leftmotorspeed, -rightmotorspeed)
-motorleft=(leftmotorspeed,0)
-motorright=(0,rightmotorspeed)
+motorright=(leftmotorspeed,0)
+motorleft=(0,rightmotorspeed)
 
 #  Camera settings #
 camera = PiCamera ()
 camera.resolution = (160, 120)
-camera.framerate = 16
+camera.framerate = 15
 rawCapture = PiRGBArray(camera, size =(160,120))
-camera.rotation=180
+camera.rotation=180 
 
 #  Color to detect settings
 lower_red = np.array([100,100,100])
 upper_red = np.array([130,255,255])
+
+def TurnRight():
+    robot.value=motorright
+    time.sleep(0.25)
+    robot.stop()
+    print("right")
+
+def TurnLeft():
+    robot.value=motorleft
+    time.sleep(0.25)
+    robot.stop()
+    print("left")
+
+def Charge():
+    robot.value=motorforward
+    print("Attack!!!")
 
 
 """  Action Time  """
@@ -70,23 +86,28 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
             cX = int(M["m10"] / M["m00"])
             #cY = int(M["m01"] / M["m00"])
             # we could potentially use this parameter to exclude blue detected high up
-            if 60 < cX < 80:
-                print("Attack!!!")
+            while 45 < cX < 100:
+                Charge()                
+                break
                 
-            if cX <60:
-                print("Turn left")
+            if cX <45:
+                TurnLeft()
+                               
 
-            if cX >80:
-                print("Right")
+            if cX >100:
+                TurnRight()
+                
                 
 
         else:
-            cX, cY = 0, 0
-            print("Must Explore!")
+            robot.stop()
+            print("No Blue")
+            
             
         #M = 0          
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+            robot.stop()
 
     cv2.imshow("Frame", frame)
     cv2.imshow('mask',mask)
@@ -97,24 +118,8 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     rawCapture.truncate(0)
     if key == ord("q"):
         break
+        robot.stop()
+
+robot.stop()
     
 cv2.destroyAllWindows()
-
-
-
-
-
-
-        
-            #if cX != 0:
-                #robot.value=motorforward
-               # time.sleep(1)
-                #robot.stop()
-            #else:
-               # print("Nah blue bro")
-
- #consider adding a "round" criteria for optimization
-
-
-
-
