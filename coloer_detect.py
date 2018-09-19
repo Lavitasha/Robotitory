@@ -72,10 +72,10 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
             if 60 < cX < 80:
                 print("Attack!!!")
                 
-            if cX <= 55:
+            if cX <60:
                 print("Turn left")
 
-            if cX > 55:
+            if cX >80:
                 print("Right")
                 
 
