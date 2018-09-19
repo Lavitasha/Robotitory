@@ -51,10 +51,29 @@ def TurnLeft():
 
 def Charge():
     robot.value=motorforward
+    time.sleep(0.5)
     print("Attack!!!")
 
+def Explore():
+    robot.value=motorright
+    time.sleep(0.5)
+    robot.value=motorforward
+    time.sleep(1)
+    robot.value=motorleft
+    time.sleep(0.5)
+    robot.value=motorforward
+    time.sleep(1)
 
-"""  Action Time  """
+def Stuck():
+    robot.value=motorbackward
+    time.sleep(1)
+    robot.value=motorright
+    time.sleep(1)
+    robot.value=motorforward
+    time.sleep(0.5)
+
+
+
 
 
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
@@ -75,18 +94,23 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
         cv2.imshow('Frame',frame)
 
         # Find the biggest area and put a green square around it
-        c_m = max(contours, key=cv2.contourArea)
+        c_m = max(contours, key=cv2.contourArea)      
         x, y, w, h = cv2.boundingRect(c_m)
         cv2.rectangle(res, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
         # Report the centroid of the biggest contour, if none set to zero
+
+        area = cv2.contourArea(c_m)
+        
         M = cv2.moments(c_m)
+        print("Area is",area)
+        
         if M["m00"] != 0:
             print("Blue Ballon detected")
             cX = int(M["m10"] / M["m00"])
             #cY = int(M["m01"] / M["m00"])
             # we could potentially use this parameter to exclude blue detected high up
-            while 45 < cX < 100:
+            while 45 < cX < 100 or area >= 5500:
                 Charge()                
                 break
                 
@@ -101,7 +125,9 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 
         else:
             robot.stop()
-            print("No Blue")
+            print("Explore")
+
+        ###When Cx and Cy haven't change in x seconds enable "wiggle"
             
             
         #M = 0          
