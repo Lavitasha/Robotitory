@@ -18,7 +18,6 @@ hownear=15.0
 reversetime=0.5
 turntime=0.75
 
-<<<<<<< HEAD
 leftmotorspeed=0.30
 rightmotorspeed=0.288
 
@@ -26,31 +25,18 @@ motorforward=(leftmotorspeed, rightmotorspeed)
 motorbackward=(-leftmotorspeed, -rightmotorspeed)
 motorright=(leftmotorspeed,0)
 motorleft=(0,rightmotorspeed)
-=======
-leftmotorspeed=0.35
-rightmotorspeed=0.35
-
-motorforward=(leftmotorspeed, rightmotorspeed)
-motorbackward=(-leftmotorspeed, -rightmotorspeed)
-motorleft=(leftmotorspeed,0)
-motorright=(0,rightmotorspeed)
->>>>>>> 0a651a12db615942c58878a061cfb4efcef30713
 
 #  Camera settings #
 camera = PiCamera ()
 camera.resolution = (160, 120)
 camera.framerate = 15
 rawCapture = PiRGBArray(camera, size =(160,120))
-<<<<<<< HEAD
 camera.rotation=180 
-=======
->>>>>>> 0a651a12db615942c58878a061cfb4efcef30713
 
 #  Color to detect settings
 lower_red = np.array([100,100,100])
 upper_red = np.array([130,255,255])
 
-<<<<<<< HEAD
 def TurnRight():
     robot.value=motorright
     time.sleep(0.25)
@@ -67,8 +53,6 @@ def Charge():
     robot.value=motorforward
     print("Attack!!!")
 
-=======
->>>>>>> 0a651a12db615942c58878a061cfb4efcef30713
 
 """  Action Time  """
 
@@ -102,7 +86,6 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
             cX = int(M["m10"] / M["m00"])
             #cY = int(M["m01"] / M["m00"])
             # we could potentially use this parameter to exclude blue detected high up
-<<<<<<< HEAD
             while 45 < cX < 100:
                 Charge()                
                 break
@@ -119,41 +102,6 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
         else:
             robot.stop()
             print("No Blue")
-=======
-            while 60 < cX < 80:
-                robot.value=motorforward
-                print("Attack!!!")
-                break
-                
-            while cX <60:
-                robot.value=motorleft
-                time.sleep(2)
-                robot.value=motorforward
-                time.sleep(3)
-                print("Turn left")
-                break
-
-            while cX >80:
-                robot.value=motorright
-                time.sleep(2)
-                robot.value=motorforward
-                time.sleep (3)
-                
-                print("Right")
-                break
-                
-
-        else:
-            robot.value=motorright
-            time.sleep(3)
-            robot.value=motorforward
-            time.sleep (4)
-            robot.value=motorleft
-            time.sleep(3)
-            robot.value=motorforward
-            time.sleep(4)
-            print("Must Explore!")
->>>>>>> 0a651a12db615942c58878a061cfb4efcef30713
             
             
         #M = 0          
