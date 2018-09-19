@@ -54,34 +54,6 @@ def MoveGirl(direction, speed=1):
     leftspeed = 1-rightspeed
     robot.value=(leftspeed * speed, rightspeed * speed)
 
-def TurnRight():
-    
-    robot.value=motorright
-    time.sleep(0.25)
-    robot.stop()
-    print("right")
-
-def TurnLeft():
-    robot.value=motorleft
-    time.sleep(0.25)
-    robot.stop()
-    print("left")
-
-def Charge():
-    robot.value=motorforward
-    time.sleep(0.5)
-    print("Attack!!!")
-
-def Explore():
-    robot.value=motorright
-    time.sleep(0.5)
-    robot.value=motorforward
-    time.sleep(1)
-    robot.value=motorleft
-    time.sleep(0.5)
-    robot.value=motorforward
-    time.sleep(1)
-
 def Stuck():
     robot.value=motorbackward
     time.sleep(1)
@@ -100,7 +72,6 @@ def Avoidobstacle():
     time.sleep(turntime)
     robot.stop()
 
-
 def Nearobstacle(localhownear):
     distance=sensor.distance*100
     print("IsNearObstacle: " + str(distance))
@@ -111,9 +82,9 @@ def Nearobstacle(localhownear):
         print("Path Clear")
         return False 
 
-
+## Initialize a variable for the explore function
 last_seen_balloon = 0
-time_turned = time.time()  ## initialize a variable for the explore function
+time_turned = time.time()  
 turning_left = True
 
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
@@ -179,10 +150,10 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
                 time_turned = time.time()
                 
             if turning_left:
-                MoveGirl(-0.5, 0.25) ##actually turn left
+                MoveGirl(-0.5, 0.5) ##actually turn left
                 print("Exploring to the left")
             else:
-                MoveGirl(0.5, 0.25)            
+                MoveGirl(0.5, 0.5)            
                 print("Exploring to the right")
 
         ###When Cx and Cy haven't change in x seconds enable "wiggle"
