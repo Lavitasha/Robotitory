@@ -1,3 +1,4 @@
+
 """ MoveGirl with Obstacles"""
 
 # Import useful libraries
@@ -8,16 +9,6 @@ import time
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 from gpiozero import CamJamKitRobot, DistanceSensor
-
-
-# Motor settings #
-leftmotorspeed=0.30
-rightmotorspeed=0.288
-
-motorforward=(leftmotorspeed, rightmotorspeed)
-motorbackward=(-leftmotorspeed, -rightmotorspeed)
-motorright=(leftmotorspeed,0)
-motorleft=(0,rightmotorspeed)
 
 # Distance and motor Variables
 robot=CamJamKitRobot()
@@ -57,38 +48,15 @@ def MoveGirl(direction, speed=1):
     leftspeed = 1-rightspeed
     robot.value=(leftspeed * speed, rightspeed * speed)
 
-def Avoidobstacle():
-    print("Backwards")
-    robot.stop()
-    robot.value=motorbackward
-    time.sleep(reversetime)
-    robot.stop()
-    print("Right")
-    robot.value=motorright
-    time.sleep(turntime)
-    robot.stop()
-
-def Nearobstacle(localhownear):
+def Nearobstacle(localhownear): 
     distance=sensor.distance*100
-    print("IsNearObstacle: " + str(distance))
+    #print("IsNearObstacle: " + str(distance))
     if distance < localhownear:
         print("Near obstacle!")
         return True
     else:
         print("Path Clear")
         return False
-
-
-def Stuck():
-    print("Stuck")
-    robot.stop()
-    robot.value=motorbackward
-    time.sleep(reversetime)
-    robot.stop()
-    print("Left")
-    robot.value=motorleft
-    time.sleep(turntime)
-    robot.stop()
 
 
 ######### The main loop! ###############
@@ -113,8 +81,8 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
             moving = False
             if wigglelike > 5:
                 print("We are stuck")
-                MoveGirl(0.5, -1)
-                time.sleep(0.2)
+                MoveGirl(0.5, -0.6)
+                time.sleep(0.1)
                 
             
     frame_previous = frame
@@ -140,23 +108,11 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
         M = cv2.moments(c_m)
         print("Area is",area)
 
-
-
-
-        # Check if we are near an obstacle if not blue = Avoid
-        #if Nearobstacle(hownear):
-        #    if area > 2000:
-        #        print("We are near an obstacle but it is blue!")
-        #            
-        #    else:
-        #        print("There is an obstacle in the way! Avoid!!")
-        #        Avoidobstacle()
-
             
         if (M["m00"] != 0) and (area > 100):
             print("Blue Ballon detected")
             cX = int(M["m10"] / M["m00"])
-            cY = int(M["m01"] / M["m00"])
+            #cY = int(M["m01"] / M["m00"])
             
             # Get the distance between the object and the center of the field of view
             offset = cX - 80
@@ -169,9 +125,9 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
             if Nearobstacle(hownear) and (area<2000):
                 timeObstacleSeen = time.time() #record time that the obstacle was seen
 
-            if time.time() - timeObstacleSeen < 2: #we saw an obstacle less than 3 seconds ago
+            if time.time() - timeObstacleSeen < 1: #we saw an obstacle less than 3 seconds ago
                 # do some avoidance stuff here
-                MoveGirl(-0.5, -1) #move back and turn a bit
+                MoveGirl(-0.5, -0.6) #move back and turn a bit
             else:
                 # no obstacle seen, so just explore
                 # Explore
