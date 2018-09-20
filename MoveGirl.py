@@ -96,48 +96,37 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     mask = cv2.inRange(hsv, lower_red, upper_red)
     res = cv2.bitwise_and(frame,frame, mask = mask)
 
-    # Edge detection
-    edge_detected_image = cv2.Canny(mask, 75, 200)
-    cv2.imshow('Edge', edge_detected_image)
-    contour_list = []
-
     # Draw contours and report centroid for biggest one
-    contours = cv2.findContours(edge_detected_image, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
+    contours = cv2.findContours(mask, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2]
     for c in contours:
         cv2.drawContours(frame, [c], -1, (0,255,0),3)
 
-        # Detecting objects with more polygons than (NEW)
-        approx = cv2.approxPolyDP(c, 0.01 * cv2.arcLength(c, True), True)
-        area = cv2.contourArea(c)
-        if((len(approx) > 8) & (area > 30)):
-            contour_list.append(c)
-       #we deleted a previous area definition bear in mind there may be some bugs because of that
+        # Display resulting frame
+        cv2.imshow('Frame',frame)
 
-    # Find the biggest area and put a green square around it
-    if contour_list:
-        c_m = max(contour_list, key=cv2.contourArea)
+        # Find the biggest area and put a green square around it
+        c_m = max(contours, key=cv2.contourArea)      
         x, y, w, h = cv2.boundingRect(c_m)
         cv2.rectangle(res, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-        # Report the centroid of the biggest circle contour, if none set to zero
+        # Report the centroid of the biggest contour, if none set to zero
+        area = cv2.contourArea(c_m)
         M = cv2.moments(c_m)
-        
+        print("Area is",area)
 
-#if Nearobstacle(hownear) and area
+        #if Nearobstacle(hownear) and area
         
         if (M["m00"] != 0) and (area > 100):
             print("Blue Ballon detected")
             cX = int(M["m10"] / M["m00"])
-            cY = int(M["m01"] / M["m00"])
+            # cY = int(M["m01"] / M["m00"])
             # we could potentially use this parameter to exclude blue detected high up
             # get the distance between the object and the center of the field of view
             offset = cX - 80
             # turn this into rotation speed
             turn_amount = offset / 160
             MoveGirl(turn_amount, speed = 1)
-            print ("MoveGirl")
             last_seen_balloon = time.time()
-        
                
 
         else:
